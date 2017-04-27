@@ -59,7 +59,7 @@ function start(options, callback) {
     // Start the runtime
     RED.start();
 
-    setTimeout(callback(), 5000);
+    setTimeout(callback, 5000);
 }
 
 function stop() {
