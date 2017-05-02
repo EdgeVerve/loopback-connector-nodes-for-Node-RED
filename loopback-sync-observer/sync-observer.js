@@ -14,7 +14,7 @@ module.exports = function(RED) {
         if (Model._observers === undefined)
             return;
 
-        var types = [ 'access', 'before save', 'after save', 'after access' ];
+        var types = [ 'access', 'before save', 'after save', 'after access', 'composite loaded'];
 
         for ( var i in types) {
 
@@ -99,15 +99,30 @@ var observer = function(node, modelName, methodName) {
 
             return getNRId;
         }
+        // check if autoscope fields are matching for which this observer is being called.
+        // with new implementation, ctx.options contains callContext and settings has got autoscope fields
+        // below code compares call context of running and saved callContext - if it matches, it will continue with flow
+        if (_node.callContext && _node.callContext.ctx && ctx.Model.settings && ctx.Model.settings.autoscope && ctx.Model.settings.autoscope.length > 0) {
+            for (var i = 0; i < ctx.Model.settings.autoscope.length; ++i) {
+                var field = ctx.Model.settings.autoscope[i];
+                if (!ctx.options || !ctx.options.ctx) {
+                    return next();
+                }
+                if (ctx.options.ctx[field] !== _node.callContext.ctx[field])
+                    return next();
+            }
+        }
 
         var msg = {};
 
         if (ctx.Model !== undefined) {
+            // Ajith: Added following line to add Model to the msg
+            msg.Model = ctx.Model;
             msg.payload = ctx.Model.definition.name + '.' + _methodName + ' triggered';
         } else {
             msg.payload = _modelName + '.' + _methodName + ' triggered';
         }
-
+        msg.callContext = _node.callContext;
         // msg.next = next;
         msg.ctx = JSON.parse(JSON.stringify(ctx));
 

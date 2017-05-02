@@ -1,2 +1,6 @@
 /nodered/
 /node_modules/
+*.njsproj
+*.sln
+*.suo
+/.vs/config

@@ -1,0 +1,51 @@
+<!-- 
+ ©2016-2017 EdgeVerve Systems Limited (a fully owned Infosys subsidiary),
+ Bangalore, India. All Rights Reserved.
+  -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('destroy-data', {
+        category : 'function',
+        color : '#df3700',
+        defaults : {
+            name : {
+                value : "destroy data"
+            },
+            modelname : {
+                value : ""
+            },
+            filter : {
+                value : ""
+            }
+        },
+        inputs : 1,
+        outputs : 2,
+        icon : "evf.png",
+        label : function() {
+            return this.name || "destroy data";
+        }
+    });
+</script>
+<script type="text/x-red" data-template-name="destroy-data">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-modelname"><i class="icon-tag"></i> Model Name</label>
+        <input type="text" id="node-input-modelname" placeholder="Model Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-filter"><i class="icon-tag"></i> Filter</label>
+        <input type="text" id="node-input-filter" placeholder="Filter">
+    </div>
+
+</script>
+
+<script type="text/x-red" data-help-name="destroy-data">
+    <p>A node that deletes data in the specified Model matching the specified filter, in the Loopback application.</p>
+    <p> Filter to be matched can be optionally specified in the node configuration </p>
+    <p> If no filter is specified in configuration, then 'msg.filter' is used as filter to delete data.</p>
+    <p> If no filter is specified in msg as well as configuration, then an error is generated</p>
+    <p>To delete all data in a model, an empty filter '{}' is to be specified in either the configuration or msg.filter</p>
+</script>

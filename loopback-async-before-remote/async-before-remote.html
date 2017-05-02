@@ -3,7 +3,7 @@
  Bangalore, India. All Rights Reserved.
   -->
 <script type="text/javascript">
-    RED.nodes.registerType('async-observer', {
+    RED.nodes.registerType('async-before-remote', {
         category : 'input',
         color : '#81F7F3',
         defaults : {
@@ -21,11 +21,11 @@
         outputs : 1,
         icon : "evf.png",
         label : function() {
-            return this.name || "async-observer";
+            return this.name || "async-before-remote";
         }
     });
 </script>
-<script type="text/x-red" data-template-name="async-observer">
+<script type="text/x-red" data-template-name="async-before-remote">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -36,17 +36,10 @@
     </div>
     <div class="form-row">
         <label for="node-input-method"><i class="icon-tag"></i> Method</label>
-        <!--<input type="select" id="node-input-method" placeholder="Method">-->
-        <select id="node-input-method">
-            <option value="access">access</option>
-			<option value="after access">after access</option>
-            <option value="before save">before save</option>
-            <option value="after save">after save</option>
-            <option value="composite loaded">composite loaded</option>
-        </select>
+        <input type="text" id="node-input-method" placeholder="Method">
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="async-observer">
-    <p>Node that observes loopback operations in an asynchronous manner. It does not wait for node flow to complete and returns control to loopback app instantly by calling next() callback.</p>
+<script type="text/x-red" data-help-name="async-before-remote">
+    <p>Node that listen loopback before remote operations in an asynchronous manner. It does not wait for node flow to complete and returns control to loopback app instantly by calling next() callback.</p>
 </script>

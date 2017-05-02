@@ -1,0 +1,63 @@
+<!-- 
+ �2016-2017 EdgeVerve Systems Limited (a fully owned Infosys subsidiary),
+ Bangalore, India. All Rights Reserved.
+  -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('decision-table', {
+        category : 'function',
+        color : 'BurlyWood',
+        defaults : {
+            name : {
+                value : ""
+            },
+            decisiontablename : {
+                value: ""
+            }
+        },
+        inputs : 1,
+        outputs : 2,
+        icon : "evf.png",
+        label : function() {
+            return this.name || "decision-table";
+        },
+        oneditprepare: function() {
+            $("#node-config-decisiontablename").click(function() {
+                $("#node-config-decisiontablename").addClass('disabled');
+                $.getJSON('getDecisionTables',function(data) {
+                    $("#node-config-decisiontablename").removeClass('disabled');
+                    var tables = [];
+                    $.each(data, function(i, table) {
+                        tables.push(table.name);
+                    });
+                    $("#node-input-decisiontablename").autocomplete({
+                        source:tables,
+                        minLength:0,
+                        close: function( event, ui ) {
+                            $("#node-input-decisiontablename").autocomplete( "destroy" );
+                        }
+                    }).autocomplete("search","");
+                });
+            });
+        }
+    });
+    
+</script>
+<script type="text/x-red" data-template-name="decision-table">
+	<div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-decisiontablename"><i class="icon-tag"></i> Decision Table Name</label>
+        <input type="text" id="node-input-decisiontablename" style="width:60%;" placeholder="Decision Table Name">
+        <a id="node-config-decisiontablename" class="btn"><i id="node-config-decisiontablename-icon" class="fa fa-search"></i></a>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="decision-table">
+    <p>Decision Table Node with 1 input to pass the payload, and 2 outputs one for error and another for response</p>
+    <p>The Input payload will be executed using <code>DecisionTable.exec()</code> method against the gien/selected Decision input.</p>
+    <p>If there are any errors, the error response will be send to first output and if not the success response will be sent via second output.</p>
+    <p>Click on Search button to see the available <code>DecisionTable</code> names available.</p>
+</script>

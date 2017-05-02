@@ -1,0 +1,127 @@
+<!--
+ ©2016-2017 EdgeVerve Systems Limited (a fully owned Infosys subsidiary),
+ Bangalore, India. All Rights Reserved.
+  -->
+<script type="text/javascript">
+  RED.nodes.registerType('ds-switcher', {
+    category: 'input',
+    color: '#81F7F3',
+    defaults: {
+      name: {
+        value: ""
+      },
+      modelname: {
+        value: ""
+      },
+      legacyurl: {
+        value: ""
+      },
+      exists: {
+        value: ""
+      },
+      altds: {
+        value: ""
+      }
+    },
+    inputs: 0,
+    outputs: 2,
+    icon: "evf.png",
+    onpaletteadd: function() {
+
+    },
+    oneditprepare: function() {
+
+    },
+    oneditsave: function() {
+
+    //  if (dstype == "external") {
+
+    if (this.exists.length == 0) {
+
+      this.exists = "done";
+
+      RED.view.importNodes(
+
+        [{
+          "id": "ad9af53d.5e2598",
+          "type": "function",
+          "z": "cc5e5ba7.8e5828",
+          "name": "OutBound-Conversion",
+          "func": "var sendToExternal = global.get(\"sendEx\");\n\nif (msg) {\n    //the data is in msg.payload\n    // modify it here\n    \n    sendToExternal(msg);\n    \n}\nreturn msg;",
+          "outputs": 1,
+          "noerr": 0,
+          "x": 760,
+          "y": 242,
+          "wires": [
+            []
+          ]
+        }, {
+          "id": "810907c0.34b4a8",
+          "type": "function",
+          "z": "cc5e5ba7.8e5828",
+          "name": "InBound-Conversion",
+          "func": "var sendToInternal = global.get(\"sendInternal\");\n\nif (msg) {\n    \n    sendToInternal(msg);\n\n}\nreturn msg;",
+          "outputs": 1,
+          "noerr": 0,
+          "x": 760,
+          "y": 363,
+          "wires": [
+            []
+          ]
+        }], true
+      );
+   }
+    /*
+    else {
+      RED.view.importNodes(
+
+        [{
+          "id": "ad9af53d.5e2598",
+          "type": "function",
+          "z": "cc5e5ba7.8e5828",
+          "name": "Alternate-Source-Conversion",
+          "func": "var sendToExternal = global.get(\"sendEx\");\n\nif (msg) {\n    //the data is in msg.payload\n    // modify it here\n    \n    sendToExternal(msg);\n    \n}\nreturn msg;",
+          "outputs": 1,
+          "noerr": 0,
+          "x": 760,
+          "y": 242,
+          "wires": [
+            []
+          ]
+        }], true
+      );
+    }
+    */
+      //  RED.view.redraw();
+
+    },
+    label: function() {
+      return this.name || "ds-switcher";
+    }
+  });
+</script>
+<script type="text/x-red" data-template-name="ds-switcher">
+  <div class="form-row">
+    <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-modelname"><i class="icon-tag"></i> Model Name</label>
+    <input type="text" id="node-input-modelname" placeholder="Model Name">
+  </div>
+  <div class="form-row" id="legdiv">
+    <label for="node-input-legacyurl"><i class="icon-tag"></i> External Url</label>
+    <input type="text" id="node-input-legacyurl" placeholder="">
+  </div>
+  <!--
+  <div class="form-row" id="altds">
+    <label for="node-input-altds"><i class="icon-tag"></i> Data Source</label>
+    <input type="text" id="node-input-altds" placeholder="">
+  </div>
+  -->
+
+</script>
+
+<script type="text/x-red" data-help-name="ds-switcher">
+  <p>Node that allows you to simultaneously work with an additional data source.</p>
+</script>

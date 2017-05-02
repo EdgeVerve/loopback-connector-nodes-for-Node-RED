@@ -1,0 +1,49 @@
+<!-- 
+ ©2016-2017 EdgeVerve Systems Limited (a fully owned Infosys subsidiary),
+ Bangalore, India. All Rights Reserved.
+  -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('create-data', {
+        category : 'function',
+        color : '#ca993d',
+        defaults : {
+            name : {
+                value : "create data"
+            },
+            modelname : {
+                value : ""
+            },
+            data : {
+                value : ""
+            }
+        },
+        inputs : 1,
+        outputs : 2,
+        icon : "evf.png",
+        label : function() {
+            return this.name || "create data";
+        }
+    });
+</script>
+<script type="text/x-red" data-template-name="create-data">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-modelname"><i class="icon-tag"></i> Model Name</label>
+        <input type="text" id="node-input-modelname" placeholder="Model Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-data"><i class="icon-tag"></i> Data</label>
+        <input type="text" id="node-input-data" placeholder="Data">
+    </div>
+
+</script>
+
+<script type="text/x-red" data-help-name="create-data">
+    <p>A node that creates data in the specified Model of the Loopback application.</p>
+    <p> Data to be upserted can be optionally specified in the node configuration </p>
+    <p> If no data is specified in configuration, then 'msg.payload' is used as data that is upserted.</p>
+</script>

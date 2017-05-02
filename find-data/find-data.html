@@ -1,0 +1,55 @@
+<!-- 
+ ©2016-2017 EdgeVerve Systems Limited (a fully owned Infosys subsidiary),
+ Bangalore, India. All Rights Reserved.
+  -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('find-data', {
+        category : 'function',
+        color : '#749839',
+        defaults : {
+            name : {
+                value : "find data"
+            },
+            modelname : {
+                value : ""
+            },
+            filter : {
+                value : ""
+            }
+        },
+        inputs : 1,
+        outputs : 2,
+        icon : "evf.png",
+        label : function() {
+            return this.name || "find data";
+        }
+    });
+</script>
+<script type="text/x-red" data-template-name="find-data">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-modelname"><i class="icon-tag"></i> Model Name</label>
+        <input type="text" id="node-input-modelname" placeholder="Model Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-filter"><i class="icon-tag"></i> Filter</label>
+        <input type="text" id="node-input-filter" placeholder="Filter">
+    </div>
+
+</script>
+
+<script type="text/x-red" data-help-name="find-data">
+    <p>A node that finds/selects data in the specified Model matching the specified filter, in the <B>Loopback application</B>.</p>
+    <p><B>Model Name</B> is a mandatory input to be specified either in the node configuration, or as <code>msg.modelName</code> to the input of this node.</p>
+    <p> <B>Filter</B> is optional. </p>
+    <p> If no filter is specified in configuration, then <code>msg.filter</code> is used as filter to find data.</p>
+    <p> If no filter is specified in msg as well as configuration, then all records/documents are fetched, subject to a maximum count of 100000</p>
+    <p>This node has two outputs.<BR>The first output's <code>msg.payload</code> contains the results of the <I>find</I> operation, which is usually a JSON array.<BR>
+       <code>msg.error</code> contains the error object, if any.<BR> 
+       The second output's <code>msg.payload</code> will contain an error object, if an error occurred. If no error has occurred, this will be <code>undefined</code> </p>
+    <p>Upon a successful query, <code>msg.resultModelName</code> will be set to the actual model name that was queried.</p>
+</script>
