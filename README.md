@@ -59,7 +59,7 @@ var options = {
 Please refer [wiki](https://github.com/EdgeVerve/loopback-connector-nodes-for-Node-RED/wiki/Loopback-connector-for-Node-RED) documentation for more information on installation and usage.
 
 ## License
-The project is licensed under Apache License , Version 2.0 , See [LICENSE](./LICENSE) for more details.
+See [LICENSE](./LICENSE) for more details.
 
 ## Contributing
 We welcome contributions. Some of the best ways to contribute are to try things out, file bugs, and join in design conversations. 
