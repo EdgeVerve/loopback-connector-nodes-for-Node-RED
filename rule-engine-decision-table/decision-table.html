@@ -12,14 +12,24 @@
                 value : ""
             },
             decisiontablename : {
-                value: ""
+                value: "",
+                required:true
+            },
+            payload: {
+                value: "payload"
             }
         },
         inputs : 1,
         outputs : 2,
         icon : "evf.png",
         label : function() {
-            return this.name || "decision-table";
+            if(this.name){
+                return this.name;
+            } else if(this.decisiontablename){
+                return this.decisiontablename;
+            } else {
+                return "decision-table";
+            }
         },
         oneditprepare: function() {
             $("#node-config-decisiontablename").click(function() {
@@ -53,11 +63,25 @@
         <input type="text" id="node-input-decisiontablename" style="width:60%;" placeholder="Decision Table Name">
         <a id="node-config-decisiontablename" class="btn"><i id="node-config-decisiontablename-icon" class="fa fa-search"></i></a>
     </div>
+    <div class="form-row">
+        <label for="node-input-payload"><i class="fa fa-envelope"></i> Payload</label>
+        <div style="width: 70%; margin-right: 0px; margin-left: 0px;" class="red-ui-typedInput-container">
+            <a href="#" style="width: auto;"><span>msg.</span></a>
+            <div class="red-ui-typedInput-input" style="left: 56px; display: block;">
+                <input id="node-input-payload" type="text" style="width: 100%; margin-right: 0px; margin-left: 0px;" class="red-ui-typedInput">
+            </div>
+        </div>
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="decision-table">
     <p>Decision Table Node with 1 input to pass the payload, and 2 outputs one for error and another for response</p>
-    <p>The Input payload will be executed using <code>DecisionTable.exec()</code> method against the gien/selected Decision input.</p>
+    <p>The Input payload will be executed using <code>DecisionTable.exec()</code> method against the given/selected Decision input.</p>
     <p>If there are any errors, the error response will be send to first output and if not the success response will be sent via second output.</p>
-    <p>Click on Search button to see the available <code>DecisionTable</code> names available.</p>
+    <p>Click on Search button to see the available <code>DecisionTable</code> names available and select one rule.</p>
+    <p>Mention the path of rule payload in the main 'msg' object.</p>
+    <p>Once the execution is done, a toast with green/red with respective message will be displayed.</p>
+    <p>The object path of <code>msg</code> mentioned in the payload will only get modified with after successful response.</p>
+    <p>Example: if the Payload path given as <code>payload.data</code> after successful response only <code>payload.data</code> 
+    will get modified, the parent <code>payload</code> will not be touched.</p>
 </script>

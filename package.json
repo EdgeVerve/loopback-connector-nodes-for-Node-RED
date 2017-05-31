@@ -23,7 +23,13 @@
       "sync-observer": "loopback-sync-observer/sync-observer.js",
       "sync-observer-end": "loopback-sync-observer-end/sync-observer-end.js",
       "model-observer": "loopback-model-observer/model-observer.js",
-      "npm-loader": "npm-loader/npm-loader.js"
+      "async-after-remote": "loopback-async-after-remote/async-after-remote.js",
+      "ds-switcher": "loopback-ds-switcher/ds-switcher.js",
+      "async-before-remote": "loopback-async-before-remote/async-before-remote.js",
+      "create-data": "create-data/create-data.js",
+      "destroy-data": "destroy-data/destroy-data.js",
+      "find-data": "find-data/find-data.js",
+      "decision-table":"rule-engine-decision-table/decision-table.js"
     }
   },
   "author": "Sachin Mane",

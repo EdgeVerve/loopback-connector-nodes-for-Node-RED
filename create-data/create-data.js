@@ -33,7 +33,7 @@ module.exports = function(RED) {
 		} else {
                     node.status({"fill": "green", "shape": "dot", "text": "Upserted data successfully"});
 		}
-                msg.payload = response;
+                msg.payload = response.toObject();
                 node.send([msg, {payload: err}]);
             });
         }

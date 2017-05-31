@@ -128,6 +128,10 @@ var observer = function(node, modelName, methodName) {
 
         msg.next = function(msg) {
 
+            if (msg.payload || msg.payload.error || msg.error) {
+                //reporting errors in flow execution back to loopback
+                return next(msg.payload.error || msg.error);
+            }
             // var updatedCtx = msg.ctx;
             var updatedCtx = JSON.parse(JSON.stringify(msg.ctx));
             // console.log('callback function called. returning to loopback.

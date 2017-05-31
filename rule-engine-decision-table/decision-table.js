@@ -14,34 +14,32 @@ module.exports = function(RED) {
         node.on('input', function(msg) {
             node.status({});
             var decisionTableName = config.decisiontablename;
+            var payload = config.payload;
             if(decisionTableName){
                 var decisionTableModel = loopback.findModel('DecisionTable');
                 if(decisionTableModel){
-                    if(msg.payload){
-                        if(typeof msg.payload === 'string') msg.payload = JSON.parse(msg.payload);
-                        if(msg.payload.data){
-                            if(msg.callContext){
-                                decisionTableModel.exec(decisionTableName, msg.payload.data, msg.callContext, function(err, data){
-                                    if(err){
-                                        node.status({"fill": "red", "shape": "dot", "text": err});
-                                        node.send([err, null]);
-                                    }else {
-                                        node.status({"fill": "green", "shape": "dot", "text": "Decision table execution successful."});
-                                        msg.payload =  data;
-                                        node.send([null, msg]);
-                                    }
-                                });
-                            }else {
-                                node.status({"fill": "red", "shape": "dot", "text":"msg doesn't contain callContext which need to be passed as options." });
-                                node.send([new Error("msg doesn't contain callContext which need to be passed as options."),null]);
-                            }
-                        }else{
-                            node.status({"fill": "red", "shape": "dot", "text":"msg.payload doesn't contain either 'data' required." });
-                            node.send([new Error("msg.payload doesn't contain either 'data' required."),null]);
+                    var givenInput = getObjectWithDotChain(msg, payload);
+                    if(givenInput){
+                        if(msg.callContext){
+                            if(typeof givenInput === 'string') givenInput = JSON.parse(givenInput);
+                            decisionTableModel.exec(decisionTableName, givenInput, msg.callContext, function(err, data){
+                                if(err){
+                                    node.status({"fill": "red", "shape": "dot", "text": err});
+                                    node.send([err, null]);
+                                }else {
+                                    node.status({"fill": "green", "shape": "dot", "text": "Decision table execution successful."});
+                                    setObjectWithDotChain(msg, payload, data);
+                                    node.send([null, msg]);
+                                }
+                            });
+                        }else {
+                            node.status({"fill": "red", "shape": "dot", "text":"msg doesn't contain callContext which need to be passed as options." });
+                            node.send([new Error("msg doesn't contain callContext which need to be passed as options."),null]);
                         }
                     } else {
-                        node.status({"fill": "red", "shape": "dot", "text":"Message doesn't have payload. msg.payload is not defined." });
-                        node.send([new Error("Message doesn't have payload. msg.payload is not defined."),null]);
+                        var msgText = "Message doesn't have any data on specified path -> " + payload;
+                        node.status({"fill": "red", "shape": "dot", "text": msgText});
+                        node.send([new Error(msgText),null]);
                     }
                 } else {
                     node.status({"fill": "red", "shape": "dot", "text":"Model 'DecisionTable' not found." });
@@ -57,6 +55,25 @@ module.exports = function(RED) {
         node.on('close', function() {
 
         });
+        // Function to get the object value from string dot chain path example obj = {a:1, b1: {b2: {b3:5}}}, getObjectWithDotChain(obj, 'b1.b2.b3')
+        function getObjectWithDotChain(obj,str) {
+            if (typeof str == 'string')
+                return getObjectWithDotChain(obj,str.split('.'));
+            else if (str.length==0)
+                return obj;
+            else
+                return getObjectWithDotChain(obj[str[0]],str.slice(1));
+        }
+        // Function to set the object value from string dot chain path example obj = {a:1, b1: {b2: {b3:5}}}, 
+        // setObjectWithDotChain(obj, 'b1.b2.b3', 10); obj.b1.b2.b3 returns 10
+        function setObjectWithDotChain(obj, str, value){
+            if (typeof str == 'string')
+                setObjectWithDotChain(obj,str.split('.'), value);
+            else if (str.length==1 && value!==undefined)
+                obj[str[0]] = value;
+            else
+                setObjectWithDotChain(obj[str[0]],str.slice(1), value);
+        }
     }
 
     RED.nodes.registerType("decision-table", DecisionTableNode);

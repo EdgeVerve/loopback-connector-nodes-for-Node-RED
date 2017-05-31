@@ -36,9 +36,14 @@ module.exports = function(RED) {
 	            } else {
 		        node.status({"fill": "green", "shape": "dot", "text": "Found " + response.length + " records"});
 	            }
-		    msg.payload = response;
+		    //msg.payload = response;
                     msg.error = err;
                     msg.resultModelName = modelName;
+
+                    response.forEach(function(instance,index){
+                        response[index] = response[index].toObject();
+                    });
+                    msg.payload = response;
                     node.send([msg, {payload: err}]);
 		});
             }
