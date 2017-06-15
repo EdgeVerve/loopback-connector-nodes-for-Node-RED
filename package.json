@@ -45,7 +45,6 @@
     "when": "^3.7.7"
   },
   "dependencies": {
-    "express": "^4.13.4",
-    "node-red": "^0.13.2"
+    "express": "^4.13.4"
   }
 }
