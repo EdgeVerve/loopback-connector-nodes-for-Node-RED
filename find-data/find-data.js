@@ -13,8 +13,8 @@ module.exports = function(RED) {
   function FindDataNode(config) {
     RED.nodes.createNode(this, config);
     var node = this;
-    var filter;
     this.on('input', function(msg) {
+        var filter;
         node.status({});
         var modelName = config.modelname || msg.modelName;
 	if(config.filter && typeof config.filter === 'string') filter = JSON.parse(config.filter); 
