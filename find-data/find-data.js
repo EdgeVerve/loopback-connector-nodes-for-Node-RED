@@ -47,7 +47,9 @@ module.exports = function (RED) {
 						msg.resultModelName = modelName;
 
 						response.forEach(function (instance, index) {
-							response[index] = response[index].toObject();
+							if (instance instanceof Model) {
+								response[index] = response[index].toObject();
+							}
 						});
 						msg.payload = response;
 						node.send([msg, {

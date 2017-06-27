@@ -40,7 +40,11 @@ module.exports = function (RED) {
 							"text": "Upserted data successfully"
 						});
 					}
-					msg.payload = response.toObject();
+					if (response instanceof Model) {
+						msg.payload = response.toObject();
+					} else {
+						msg.payload = response;
+					}
 					node.send([msg, {
 						payload: err
 					}]);
