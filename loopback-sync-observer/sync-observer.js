@@ -128,6 +128,23 @@ var observer = function(node, modelName, methodName) {
 
         msg.next = function(msg) {
 
+            var err = {};
+            if (_methodName === 'after save') {
+                 if (typeof msg.payload === 'string' && msg.payload.startsWith('Error')) {
+                    err = new Error(msg.payload);
+                    err.retriable = true;
+                    return next(err);
+                 } else if (typeof msg.error === 'string') {
+                     err = new Error(msg.error);
+                     err.retriable = true;
+                     return next(err);
+                 } else if (msg.payload.error || msg.error) {
+                    err = new Error(msg.payload.error || msg.error.message);
+                    err.retriable = true;
+                    return next(err);
+                 }      
+            } 
+
             if (msg.payload || msg.payload.error || msg.error) {
                 //reporting errors in flow execution back to loopback
                 return next(msg.payload.error || msg.error);
