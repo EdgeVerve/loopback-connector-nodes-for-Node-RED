@@ -129,7 +129,7 @@ var observer = function(node, modelName, methodName) {
         msg.next = function(msg) {
 
             var err = {};
-            if (_methodName === 'after save') {
+            if (_methodName === 'after save' || _methodName === 'after delete') {
                  if (typeof msg.payload === 'string' && msg.payload.startsWith('Error')) {
                     err = new Error(msg.payload);
                     err.retriable = true;
