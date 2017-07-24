@@ -52,7 +52,6 @@ module.exports = function(RED) {
                             j--;
                         }
                     } catch (e) {
-                        console.log('error in observers');
                     }
                 }
             }

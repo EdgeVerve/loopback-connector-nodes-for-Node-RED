@@ -9,42 +9,12 @@ var _ = require('lodash');
 
 module.exports = function(RED) {
 
+ 
     function removeOldObservers(Model, id) {
-
-        if (Model._observers === undefined)
-            return;
-
-        var types = [ 'access', 'before save', 'after save', 'after access', 'composite loaded'];
-
-        for ( var i in types) {
-
-            var observers = Model._observers[types[i]];
-
-            if (observers !== undefined && observers.length !== 0) {
-
-                for ( var j in observers) {
-                    var observer = observers[j];
-
-                    var nodeId;
-
-                    // hack to get nodeId.
-                    try {
-                        nodeId = observer(null, null)();
-                        // console.log('node id received from observer = ',
-                        // nodeId);
-                        if (nodeId === id) {
-                            // Id matched. remove this observer
-                            // console.log('node id matched. removing this
-                            // observer.');
-                            observers.splice(j, 1);
-                            j--;
-                        }
-                    } catch (e) {
-                    }
-                }
-            }
-
-        }
+        var types = [ 'access', 'before save','after delete', 'after save', 'after access', 'composite loaded'];
+        actualRemoveObservers(Model,id, Model._observers, types);
+        var fsTypes = ['after delete', 'after save'];
+        removeFsObservers(Model,id, Model._fsObservers, fsTypes);
 
     }
 
@@ -130,5 +100,10 @@ var observer = function(node, modelName, methodName) {
 
         // return control to loopback application.
         next();
+    }
+
+    
+    this.observe.getId = function() {
+            return _node.id;
     }
 }
