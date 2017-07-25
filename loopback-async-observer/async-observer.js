@@ -8,6 +8,57 @@ var loopback = require('loopback');
 var _ = require('lodash');
 
 module.exports = function(RED) {
+    
+    function actualRemoveObservers(Model, id, observersCollection , types) {
+        if (observersCollection === undefined || observersCollection.length === 0 )
+            return;
+        for ( var i in types) {
+            var observers = observersCollection[types[i]];
+            if (observers !== undefined && observers.length !== 0) {
+                for ( var j in observers) {
+                    var observer = observers[j];
+                    var nodeId;
+                    try {
+                        nodeId = observer(null, null)();
+                        if (nodeId === id) {
+                            observers.splice(j, 1);
+                            j--;
+                        }
+                    } catch (e) {
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    function removeFsObservers(Model, id, observersCollection , types) {
+         if (observersCollection === undefined)
+            return;
+
+        for ( var i in types) {
+
+            var observers = observersCollection[types[i]];
+            if (observers !== undefined && observers.length !== 0) {
+                var actualObservers = observers.observers;
+                for ( var j in actualObservers) {
+                    var observer = actualObservers[j];
+                    var nodeId;
+                    try {
+                        nodeId = observer.getId();
+                        if (nodeId === id) {
+                            actualObservers.splice(j, 1);
+                            j--;
+                        }
+                    } catch (e) {
+                    }
+                }
+            }
+
+        }
+    }
+
 
  
     function removeOldObservers(Model, id) {
