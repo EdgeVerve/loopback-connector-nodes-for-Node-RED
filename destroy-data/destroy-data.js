@@ -13,6 +13,7 @@ module.exports = function(RED) {
   function DestroyDataNode(config) {
     RED.nodes.createNode(this, config);
     var node = this;
+    var _node = this;
     var filter;
     this.on('input', function(msg) {
         node.status({});
@@ -29,7 +30,7 @@ module.exports = function(RED) {
 
         console.log("INPUT", modelName, filter);
 
-        var Model = loopback.findModel(modelName);
+        var Model = loopback.findModel(modelName, node.callContext);
 
         if(Model)
         {
@@ -55,7 +56,7 @@ module.exports = function(RED) {
     node.on('close', function() {
         node.status({});
         var modelName = config.modelname;
-        var Model = loopback.findModel(modelName);
+        var Model = loopback.findModel(modelName, _node.callContext);
         if(!Model)
 	{
 	    node.status({"fill": "red", "shape": "dot", "text": "ERROR: Model with name " + modelName + " does not exist"});

@@ -282,7 +282,7 @@ module.exports = function(RED) {
 
     var method = "after save";
 
-    var Model = loopback.findModel(modelName);
+    var Model = loopback.findModel(modelName, node.callContext);
 
     var DsDefinition = loopback.findModel("DataSourceDefinition");
 

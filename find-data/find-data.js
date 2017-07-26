@@ -25,7 +25,7 @@ module.exports = function (RED) {
 			var Model;
 
 			if (modelName && modelName.trim().length > 0) {
-				Model = loopback.findModel(modelName);
+                Model = loopback.findModel(modelName, node.callContext);
 				if (Model) {
 					Model.find(filter, msg.callContext, function (err, response) {
 						if (err) {

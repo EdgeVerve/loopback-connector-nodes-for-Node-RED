@@ -13,7 +13,7 @@ module.exports = function (RED) {
 	function CreateDataNode(config) {
 		RED.nodes.createNode(this, config);
 		var node = this;
-
+        var _node = this;
 		this.on('input', function (msg) {
 			node.status({});
 			var modelName = config.modelname;
@@ -22,7 +22,7 @@ module.exports = function (RED) {
 
 			console.log("INPUT", modelName, data);
 
-			var Model = loopback.findModel(modelName);
+            var Model = loopback.findModel(modelName, node.callContext);
 
 			if (Model) {
 				Model.upsert(data, msg.callContext, function (err, response) {
@@ -65,7 +65,7 @@ module.exports = function (RED) {
 		node.on('close', function () {
 			node.status({});
 			var modelName = config.modelname;
-			var Model = loopback.findModel(modelName);
+            var Model = loopback.findModel(modelName, _node.callContext);
 			if (!Model) {
 				node.status({
 					"fill": "red",

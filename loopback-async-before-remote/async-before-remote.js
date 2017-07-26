@@ -69,8 +69,8 @@ module.exports = function(RED) {
         var modelName = config.modelname;
         var method = config.method;
 
-        var Model = loopback.findModel(modelName);
-
+        //var Model = loopback.findModel(modelName);
+        var Model = loopback.findModel(modelName, node.callContext);
         if (Model !== undefined) {
 
             // Remove existing observers if any.
@@ -115,20 +115,12 @@ var observer = function(node, modelName, methodName) {
                 return next();
             }
             
-            var Model = loopback.getModel(_modelName);
-            
-            // check if autoscope fields are matching for which this observer is being called.
-            // with new implementation, ctx.options contains callContext and settings has got autoscope fields
-            // below code compares call context of running and saved callContext - if it matches, it will continue with flow
-            if (_node.callContext && _node.callContext.ctx && Model.settings && Model.settings.autoscope && Model.settings.autoscope.length > 0) {
-                for (var i = 0; i < Model.settings.autoscope.length; ++i) {
-                    var field = Model.settings.autoscope[i];
-                    if (!ctx.req || !ctx.req.callContext || !ctx.req.callContext.ctx) {
-                        return next();
-                    }
-                    if (ctx.req.callContext.ctx[field] !== _node.callContext.ctx[field])
-                        return next();
-                }
+            //var Model = loopback.getModel(_modelName);
+            var Model = loopback.getModel(modelName, _node.callContext);
+
+
+            if (!utils.compareContext(_node, { Model: Model, options: { ctx: ctx.req.callContext.ctx } })) {
+                return next();
             }
 
             var msg = {};

@@ -6,69 +6,10 @@
  */
 var loopback = require('loopback');
 var _ = require('lodash');
+var utils = require('../common/utils');
 
 module.exports = function(RED) {
     
-    function actualRemoveObservers(Model, id, observersCollection , types) {
-        if (observersCollection === undefined || observersCollection.length === 0 )
-            return;
-        for ( var i in types) {
-            var observers = observersCollection[types[i]];
-            if (observers !== undefined && observers.length !== 0) {
-                for ( var j in observers) {
-                    var observer = observers[j];
-                    var nodeId;
-                    try {
-                        nodeId = observer(null, null)();
-                        if (nodeId === id) {
-                            observers.splice(j, 1);
-                            j--;
-                        }
-                    } catch (e) {
-                    }
-                }
-            }
-
-        }
-
-    }
-
-    function removeFsObservers(Model, id, observersCollection , types) {
-         if (observersCollection === undefined)
-            return;
-
-        for ( var i in types) {
-
-            var observers = observersCollection[types[i]];
-            if (observers !== undefined && observers.length !== 0) {
-                var actualObservers = observers.observers;
-                for ( var j in actualObservers) {
-                    var observer = actualObservers[j];
-                    var nodeId;
-                    try {
-                        nodeId = observer.getId();
-                        if (nodeId === id) {
-                            actualObservers.splice(j, 1);
-                            j--;
-                        }
-                    } catch (e) {
-                    }
-                }
-            }
-
-        }
-    }
-
-
- 
-    function removeOldObservers(Model, id) {
-        var types = [ 'access', 'before save','after delete', 'after save', 'after access', 'composite loaded'];
-        actualRemoveObservers(Model,id, Model._observers, types);
-        var fsTypes = ['after delete', 'after save'];
-        removeFsObservers(Model,id, Model._fsObservers, fsTypes);
-
-    }
-
     function AsyncObserverNode(config) {
         RED.nodes.createNode(this, config);
         var node = this;
@@ -76,14 +17,14 @@ module.exports = function(RED) {
         var modelName = config.modelname;
         var method = config.method;
 
-        var Model = loopback.findModel(modelName);
+        var Model = loopback.findModel(modelName, node.callContext);
 
         if (Model !== undefined) {
             // console.log ('Model = ', Model._observers[method][0]);
 
             // Remove existing observers if any.
             // console.log('observers before removing = ', Model._observers);
-            removeOldObservers(Model, node.id);
+            utils.removeOldObservers(Model, node.id);
             // console.log('observers after removing = ', Model._observers);
 
             Model.observe(method, new observer(node, modelName, method).observe);
@@ -94,7 +35,7 @@ module.exports = function(RED) {
             if (Model != undefined) {
                 // console.log('observers before removing = ',
                 // Model._observers);
-                removeOldObservers(Model, node.id);
+                utils.removeOldObservers(Model, node.id);
                 // console.log('observers after removing = ', Model._observers);
             }
         });
@@ -120,19 +61,9 @@ var observer = function(node, modelName, methodName) {
 
             return getNRId;
         }
-        // if node was created with context
-        // check if autoscope fields are matching for which this observer is being called.
-        // with new implementation, ctx.options contains callContext and settings has got autoscope fields
-        // below code compares call context of running and saved callContext - if it matches, it will continue with flow        
-        if (_node.callContext && _node.callContext.ctx && ctx.Model.settings && ctx.Model.settings.autoscope && ctx.Model.settings.autoscope.length > 0) {
-            for (var i = 0; i < ctx.Model.settings.autoscope.length; ++i) {
-                var field = ctx.Model.settings.autoscope[i];
-                if (!ctx.options || !ctx.options.ctx) {
-                    return next();
-                }
-                if (ctx.options.ctx[field] !== _node.callContext.ctx[field])
-                    return next();
-            }
+
+        if (!utils.compareContext(_node, ctx)) {
+            return next();
         }
 
         var msg = {};

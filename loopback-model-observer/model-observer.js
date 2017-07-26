@@ -16,7 +16,7 @@ module.exports = function(RED) {
         var modelName = config.modelname;
         var event = config.event;
 
-        var Model = loopback.findModel(modelName);
+        var Model = loopback.findModel(modelName, node.callContext);
 
         node.enabled = true;
         if (Model !== undefined) {
@@ -29,15 +29,11 @@ module.exports = function(RED) {
                     if (ctx && ctx.options) {
                         ctx = ctx.options;
                     }
-                }                
-                // if node was created with context then compare the context of node with that of execution
-                if (node.callContext && node.callContext.ctx && Model.settings && Model.settings.autoscope && Model.settings.autoscope.length > 0) {
-                    for (var i = 0; i < Model.settings.autoscope.length; ++i) {
-                        var field = Model.settings.autoscope[i];
-                        if (ctx[field] != node.callContext.ctx[field])
-                            return;
-                    }
+                }
+                if (!utils.compareContext(node, { Model: Model, options: { ctx: ctx } } )) {
+                    return next();
                 }
+
                 if (node.enabled) {
                     var msg = {
                         payload : eventPayload
