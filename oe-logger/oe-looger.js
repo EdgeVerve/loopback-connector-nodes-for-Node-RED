@@ -13,11 +13,9 @@ module.exports = function(RED) {
         var node = this;
         var context = node.callContext;
         var flowName = config.flowName;
-        var method = config.method;
+        var message = config.message;
         var levelOfLog = config.levelOfLog;
-
-
-        var logger = oeLogger.loggerFn(flowName);
-
+        var log = oeLogger(flowName);
+        log[levelOfLog](context, message);
     }
 };
