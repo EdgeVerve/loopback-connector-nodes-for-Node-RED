@@ -29,7 +29,8 @@
       "create-data": "create-data/create-data.js",
       "destroy-data": "destroy-data/destroy-data.js",
       "find-data": "find-data/find-data.js",
-      "decision-table":"rule-engine-decision-table/decision-table.js"
+      "decision-table": "rule-engine-decision-table/decision-table.js",
+      "oe-logger":"oe-logger/oe-logger.js"
     }
   },
   "author": "Sachin Mane",
@@ -42,7 +43,8 @@
     "should": "^8.2.2",
     "sinon": "^1.17.3",
     "supertest": "^1.2.0",
-    "when": "^3.7.7"
+    "when": "^3.7.7",
+    "oe-logger": "^0.9.1"
   },
   "dependencies": {
     "express": "^4.13.4"

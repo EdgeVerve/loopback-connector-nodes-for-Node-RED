@@ -1,0 +1,23 @@
+/**
+ * 
+ * ©2016 EdgeVerve Systems Limited (a fully owned Infosys subsidiary),
+ * Bangalore, India. All Rights Reserved.
+ * 
+ */
+var loopback = require('loopback');
+var oeLogger = require('oe-logger');
+
+module.exports = function(RED) {
+    function OeLoggerNode(config) {
+        RED.nodes.createNode(this, config);
+        var node = this;
+        var context = node.callContext;
+        var flowName = config.flowName;
+        var method = config.method;
+        var levelOfLog = config.levelOfLog;
+
+
+        var logger = oeLogger.loggerFn(flowName);
+
+    }
+};
