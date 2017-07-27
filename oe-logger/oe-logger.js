@@ -11,7 +11,7 @@ module.exports = function(RED) {
     function OeLoggerNode(config) {
         RED.nodes.createNode(this, config);
         var node = this;
-        var context = node.callContext;
+        var context = node.callContext.ctx;
         var flowName = config.flowName;
         var message = config.message;
         var levelOfLog = config.levelOfLog;
