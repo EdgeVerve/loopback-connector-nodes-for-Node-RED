@@ -4,7 +4,6 @@
  * Bangalore, India. All Rights Reserved.
  * 
  */
-var loopback = require('loopback');
 var oeLogger = require('oe-logger');
 
 module.exports = function(RED) {
