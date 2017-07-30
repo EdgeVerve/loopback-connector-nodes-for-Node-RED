@@ -16,7 +16,12 @@ module.exports = function(RED) {
         var message = config.message;
         var levelOfLog = config.levelOfLog;
         var log = oeLogger(flowName);
-        log[levelOfLog](context, message);
+        node.on('input', function(msg) {
+            log[levelOfLog](context, message);
+            if (msg && msg.next) {
+                msg.next(msg);
+            }
+        });
     }
     RED.nodes.registerType("oe-logger", OeLoggerNode);
 };
