@@ -6,6 +6,7 @@
  */
 var loopback = require('loopback');
 var _ = require('lodash');
+var utils = require('../common/utils');
 
 module.exports = function(RED) {
 
