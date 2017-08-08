@@ -72,5 +72,13 @@
 </script>
 
 <script type="text/x-red" data-help-name="oe-logger">
-    <p>Node that logs a message using oe-logger. Dont forget to call msg.next (msg) to return control.</p>
+    <p>Node that logs a message using oe-logger.</p>
+    <p><b>Properties:</b></p>
+    <p><i>Flow Name</i> - the name of the logger, typically the name of the flow (default: 'default-flow').</p>
+    <p><i>Message</i> - the message to be logged (default: empty).</p>
+    <p><i>Level</i> - the level of log (default: 'Info').</p>
+    <p><i>Add payload</i> - True for adding msg.payload to log (default: False).</p>
+    <p><i>Add instance</i> - True for adding msg.payload to log (default: False).</p>
+    <p><b>Output:</b></p>
+    <p>At the end of the logging operation, the node invokes <i>node.send(msg)</i> to send msg to the next node.</p>
 </script>
