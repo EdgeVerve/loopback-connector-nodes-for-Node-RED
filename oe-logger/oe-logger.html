@@ -16,6 +16,12 @@
             },
             levelOfLog : {
                 value : ""
+            },
+            addPayload: {
+                value: ""
+            },
+            addInstance: {
+                value: ""
             }
         },
         inputs : 1,
@@ -37,7 +43,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-levelOfLog"><i class="icon-tag"></i> Level</label>
-        <!--<input type="select" id="node-input-levelOfLog" placeholder="Level">-->
+        <!--<input type="select" id="node-input-levelOfLog">-->
         <select id="node-input-levelOfLog">
             <option value='trace'>Trace</option>
 			<option value='debug'>Debug</option>
@@ -45,6 +51,22 @@
             <option value='warn'>Warn</option>
             <option value='error'>Error</option>
             <option value='fatal'>Fatal</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-addPayload"><i class="icon-tag"></i> Add payload</label>
+        <!--<input type="select" id="node-input-addPayload">-->
+        <select id="node-input-addPayload">
+            <option value='1'>True</option>
+			<option value='0'>False</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-addInstance"><i class="icon-tag"></i> Add instance</label>
+        <!--<input type="select" id="node-input-addInstance">-->
+        <select id="node-input-addInstance">
+            <option value='1'>True</option>
+			<option value='0'>False</option>
         </select>
     </div>
 </script>
