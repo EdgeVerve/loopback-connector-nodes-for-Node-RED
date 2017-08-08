@@ -11,11 +11,16 @@ module.exports = function(RED) {
         RED.nodes.createNode(this, config);
         var node = this;
         var context = node.callContext.ctx;
-        var flowName = config.flowName;
+        var flowName = config.flowName.toString();
         var message = config.message;
         var levelOfLog = config.levelOfLog;
         var log = oeLogger(flowName);
         node.on('input', function(msg) {
+            if (msg && msg.ctx && msg.ctx.options) {
+                context = msg.ctx.options;
+            } else if (msg && msg.callContext) {
+                context = msg.callContext;
+            }
             log[levelOfLog](context, message);
             if (msg && msg.next) {
                 msg.next(msg);
