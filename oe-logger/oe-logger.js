@@ -10,35 +10,47 @@ module.exports = function(RED) {
     function OeLoggerNode(config) {
         RED.nodes.createNode(this, config);
         var node = this;
-        var context = node.callContext.ctx;
-        var flowName = config.flowName;
-        if (flowName === '') {
-            flowName = 'default-flow';
+        this.context = node.callContext.ctx;
+        this.flowName = config.flowName;
+        if (this.flowName === '') {
+            this.flowName = 'default-flow';
         }
-        var levelOfLog = config.levelOfLog;
-        if (levelOfLog === '') {
-            levelOfLog = 'info';
+        this.levelOfLog = config.levelOfLog;
+        if (this.levelOfLog === '') {
+            this.levelOfLog = 'info';
         }
-        var message = {};
+        this.message = {};
         if (config.message !== '') {
-            message.message = config.message;
+            this.message.message = config.message;
         }
-        var log = oeLogger(flowName);
-        var addPayload = config.addPayload;
-        var addInstance = config.addInstance;
+        this.log = oeLogger(this.flowName);
+        this.complete = (config.complete||"payload").toString();
+        if (this.complete === "false") {
+            this.complete = "payload";
+        }
         node.on('input', function(msg) {
-            if (msg && msg.payload && addPayload === '1') {
-               message.payload = msg.payload; 
+            if (this.complete === "true") {
+                this.message.msg = msg;
             }
-            if (msg && msg.ctx && msg.ctx.instance && addInstance === '1') {
-                message.instance = msg.ctx.instance;
+            if (this.complete !== "true") {
+                var property = "payload";
+                var output = msg[property];
+                 if (this.complete !== "false" && typeof this.complete !== "undefined") {
+                    property = this.complete;
+                    try {
+                        output = RED.util.getMessageProperty(msg,this.complete);
+                    } catch(err) {
+                        output = undefined;
+                    }
+                }
+                this.message[property] = output;
             }
             if (msg && msg.ctx && msg.ctx.options) {
                 context = msg.ctx.options;
             } else if (msg && msg.callContext) {
                 context = msg.callContext;
             }
-            log[levelOfLog](context, JSON.stringify(message));
+            this.log[this.levelOfLog](context, JSON.stringify(this.message));
             node.send(msg);
         });
     }

@@ -17,18 +17,40 @@
             levelOfLog : {
                 value : ""
             },
-            addPayload: {
-                value: ""
-            },
-            addInstance: {
-                value: ""
-            }
+            complete: {value:"false", required:true}
         },
         inputs : 1,
         outputs : 1,
         icon : "oeCloudLogo.svg",
         label : function() {
             return this.name || "oe-logger";
+        },
+        oneditprepare: function() {
+            $("#node-input-typed-complete").typedInput({types:['msg', {value:"full",label:RED._("node-red:debug.msgobj"),hasValue:false}]});
+            if (this.complete === "true" || this.complete === true) {
+                // show complete message object
+                $("#node-input-typed-complete").typedInput('type','full');
+            } else {
+                var property = (!this.complete||(this.complete === "false")) ? "payload" : this.complete+"";
+                $("#node-input-typed-complete").typedInput('type','msg');
+                $("#node-input-typed-complete").typedInput('value',property);
+            }
+            $("#node-input-typed-complete").on('change',function() {
+                if ($("#node-input-typed-complete").typedInput('type') === 'msg'
+                    &&
+                    $("#node-input-typed-complete").typedInput('value') === ''
+                ) {
+                    $("#node-input-typed-complete").typedInput('value','payload');
+                }
+            });
+        },
+        oneditsave: function() {
+            var type = $("#node-input-typed-complete").typedInput('type');
+            if (type === 'full') {
+                $("#node-input-complete").val("true");
+            } else {
+                $("#node-input-complete").val($("#node-input-typed-complete").typedInput('value'));
+            }
         }
     });
 </script>
@@ -54,20 +76,9 @@
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-addPayload"><i class="icon-tag"></i> Add payload</label>
-        <!--<input type="select" id="node-input-addPayload">-->
-        <select id="node-input-addPayload">
-            <option value='1'>True</option>
-			<option value='0'>False</option>
-        </select>
-    </div>
-    <div class="form-row">
-        <label for="node-input-addInstance"><i class="icon-tag"></i> Add instance</label>
-        <!--<input type="select" id="node-input-addInstance">-->
-        <select id="node-input-addInstance">
-            <option value='1'>True</option>
-			<option value='0'>False</option>
-        </select>
+        <label for="node-input-typed-complete"><i class="fa fa-list"></i> <span data-i18n="debug.output"></span></label>
+        <input id="node-input-typed-complete" type="text" style="width: 70%">
+        <input id="node-input-complete" type="hidden">
     </div>
 </script>
 
@@ -77,8 +88,7 @@
     <p><i>Flow Name</i> - the name of the logger, typically the name of the flow (default: 'default-flow').</p>
     <p><i>Message</i> - the message to be logged (default: empty).</p>
     <p><i>Level</i> - the level of log (default: 'Info').</p>
-    <p><i>Add payload</i> - True for adding msg.payload to log (default: False).</p>
-    <p><i>Add instance</i> - True for adding msg.payload to log (default: False).</p>
+    <p><i>Add to log</i> - property of <i>msg</i> to be added to log (default: msg.payload).</p>
     <p><b>Output:</b></p>
     <p>At the end of the logging operation, the node invokes <i>node.send(msg)</i> to send msg to the next node.</p>
 </script>
