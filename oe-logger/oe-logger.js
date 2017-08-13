@@ -13,16 +13,13 @@ module.exports = function(RED) {
         this.context = node.callContext.ctx;
         this.flowName = config.flowName;
         if (this.flowName === '') {
-            this.flowName = 'default-flow';
+            this.flowName = 'node-red-flow';
         }
         this.levelOfLog = config.levelOfLog;
         if (this.levelOfLog === '') {
             this.levelOfLog = 'info';
         }
-        this.message = {};
-        if (config.message !== '') {
-            this.message.message = config.message;
-        }
+        this.message;
         this.log = oeLogger(this.flowName);
         this.complete = (config.complete||"payload").toString();
         if (this.complete === "false") {
@@ -30,7 +27,7 @@ module.exports = function(RED) {
         }
         node.on('input', function(msg) {
             if (this.complete === "true") {
-                this.message.msg = msg;
+                this.message = msg;
             }
             if (this.complete !== "true") {
                 var property = "payload";
@@ -43,15 +40,18 @@ module.exports = function(RED) {
                         output = undefined;
                     }
                 }
-                this.message[property] = output;
+                this.message = output;
             }
             if (msg && msg.ctx && msg.ctx.options) {
                 context = msg.ctx.options;
             } else if (msg && msg.callContext) {
                 context = msg.callContext;
             }
-            this.log[this.levelOfLog](context, JSON.stringify(this.message));
-            node.send(msg);
+            if (typeof this.message === 'object') {
+                this.log[this.levelOfLog](context, JSON.stringify(this.message));
+            } else {
+                this.log[this.levelOfLog](context, this.message);
+            }
         });
     }
     RED.nodes.registerType("oe-logger", OeLoggerNode);

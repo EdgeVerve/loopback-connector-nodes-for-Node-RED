@@ -9,18 +9,15 @@
         color : '#87a980',
         defaults : {
             flowName : {
-                value : ""
-            },
-            message : {
-                value : ""
+                value : "node-red-flow"
             },
             levelOfLog : {
-                value : ""
+                value : "info"
             },
             complete: {value:"false", required:true}
         },
         inputs : 1,
-        outputs : 1,
+        outputs : 0,
         icon : "oeCloudLogo.svg",
         label : function() {
             return this.name || "oe-logger";
@@ -60,10 +57,6 @@
         <input type="text" id="node-input-flowName" placeholder="Flow Name">
     </div>
     <div class="form-row">
-        <label for="node-input-message"><i class="icon-tag"></i> Message</label>
-        <input type="text" id="node-input-message" placeholder="Message">
-    </div>
-    <div class="form-row">
         <label for="node-input-levelOfLog"><i class="icon-tag"></i> Level</label>
         <!--<input type="select" id="node-input-levelOfLog">-->
         <select id="node-input-levelOfLog">
@@ -76,7 +69,7 @@
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-typed-complete"><i class="fa fa-list"></i> <span data-i18n="debug.output"></span></label>
+        <label for="node-input-typed-complete"><i class="fa fa-list"></i> Message</label>
         <input id="node-input-typed-complete" type="text" style="width: 70%">
         <input id="node-input-complete" type="hidden">
     </div>
@@ -85,10 +78,7 @@
 <script type="text/x-red" data-help-name="oe-logger">
     <p>Node that logs a message using oe-logger.</p>
     <p><b>Properties:</b></p>
-    <p><i>Flow Name</i> - the name of the logger, typically the name of the flow (default: 'default-flow').</p>
-    <p><i>Message</i> - the message to be logged (default: empty).</p>
+    <p><i>Flow Name</i> - the name of the logger, typically the name of the flow (default: 'node-red-flow').</p>
     <p><i>Level</i> - the level of log (default: 'Info').</p>
-    <p><i>Add to log</i> - property of <i>msg</i> to be added to log (default: msg.payload).</p>
-    <p><b>Output:</b></p>
-    <p>At the end of the logging operation, the node invokes <i>node.send(msg)</i> to send msg to the next node.</p>
+    <p><i>Message</i> - property of <i>msg</i> to logged (default: msg.payload).</p>
 </script>
