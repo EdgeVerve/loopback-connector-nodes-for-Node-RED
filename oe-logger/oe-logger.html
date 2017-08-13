@@ -1,0 +1,84 @@
+<!-- 
+ ©2016 EdgeVerve Systems Limited (a fully owned Infosys subsidiary),
+ Bangalore, India. All Rights Reserved.
+  -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('oe-logger', {
+        category : 'output',
+        color : '#87a980',
+        defaults : {
+            flowName : {
+                value : "node-red-flow"
+            },
+            levelOfLog : {
+                value : "info"
+            },
+            complete: {value:"false", required:true}
+        },
+        inputs : 1,
+        outputs : 0,
+        icon : "oeCloudLogo.svg",
+        label : function() {
+            return this.name || "oe-logger";
+        },
+        oneditprepare: function() {
+            $("#node-input-typed-complete").typedInput({types:['msg', {value:"full",label:RED._("node-red:debug.msgobj"),hasValue:false}]});
+            if (this.complete === "true" || this.complete === true) {
+                // show complete message object
+                $("#node-input-typed-complete").typedInput('type','full');
+            } else {
+                var property = (!this.complete||(this.complete === "false")) ? "payload" : this.complete+"";
+                $("#node-input-typed-complete").typedInput('type','msg');
+                $("#node-input-typed-complete").typedInput('value',property);
+            }
+            $("#node-input-typed-complete").on('change',function() {
+                if ($("#node-input-typed-complete").typedInput('type') === 'msg'
+                    &&
+                    $("#node-input-typed-complete").typedInput('value') === ''
+                ) {
+                    $("#node-input-typed-complete").typedInput('value','payload');
+                }
+            });
+        },
+        oneditsave: function() {
+            var type = $("#node-input-typed-complete").typedInput('type');
+            if (type === 'full') {
+                $("#node-input-complete").val("true");
+            } else {
+                $("#node-input-complete").val($("#node-input-typed-complete").typedInput('value'));
+            }
+        }
+    });
+</script>
+<script type="text/x-red" data-template-name="oe-logger">
+    <div class="form-row">
+        <label for="node-input-flowName"><i class="icon-tag"></i> Flow Name</label>
+        <input type="text" id="node-input-flowName" placeholder="Flow Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-levelOfLog"><i class="icon-tag"></i> Level</label>
+        <!--<input type="select" id="node-input-levelOfLog">-->
+        <select id="node-input-levelOfLog">
+            <option value='trace'>Trace</option>
+			<option value='debug'>Debug</option>
+            <option value='info'>Info</option>
+            <option value='warn'>Warn</option>
+            <option value='error'>Error</option>
+            <option value='fatal'>Fatal</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-typed-complete"><i class="fa fa-list"></i> Message</label>
+        <input id="node-input-typed-complete" type="text" style="width: 70%">
+        <input id="node-input-complete" type="hidden">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="oe-logger">
+    <p>Node that logs a message using oe-logger.</p>
+    <p><b>Properties:</b></p>
+    <p><i>Flow Name</i> - the name of the logger, typically the name of the flow (default: 'node-red-flow').</p>
+    <p><i>Level</i> - the level of log (default: 'Info').</p>
+    <p><i>Message</i> - property of <i>msg</i> to logged (default: msg.payload).</p>
+</script>
