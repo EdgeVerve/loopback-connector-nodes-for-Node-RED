@@ -43,7 +43,8 @@
     "should": "^8.2.2",
     "sinon": "^1.17.3",
     "supertest": "^1.2.0",
-    "when": "^3.7.7"
+    "when": "^3.7.7",
+    "oe-logger": "^0.9.1"
   },
   "dependencies": {
     "express": "^4.13.4"

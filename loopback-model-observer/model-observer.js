@@ -43,13 +43,13 @@ module.exports = function(RED) {
                 if (node.enabled) {
                     var msg = {
                         payload : eventPayload
-                    }
+                    };
 
                     node.send(msg);
                 } else {
                     console.log('node is disabled............');
                 }
-            })
+            });
         }
 
         node.on('close', function() {
