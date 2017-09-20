@@ -30,7 +30,8 @@
       "destroy-data": "destroy-data/destroy-data.js",
       "find-data": "find-data/find-data.js",
       "decision-table": "rule-engine-decision-table/decision-table.js",
-      "oe-logger": "oe-logger/oe-logger.js"
+      "oe-logger": "oe-logger/oe-logger.js",
+      "remote-method" : " remote-method/remote-method.js"
     }
   },
   "author": "Sachin Mane",
