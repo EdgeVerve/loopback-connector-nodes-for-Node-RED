@@ -8,7 +8,7 @@ var loopback = require('loopback');
 var _ = require('lodash');
 var utils = require('../common/utils');
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 
     function SyncObserverNode(config) {
         RED.nodes.createNode(this, config);
@@ -26,7 +26,7 @@ module.exports = function(RED) {
             Model.observe(method, new observer(node, modelName, method).observe);
         }
 
-        node.on('close', function() {
+        node.on('close', function () {
             if (Model != undefined) {
                 utils.removeOldObservers(Model, node.id);
             }
@@ -35,18 +35,18 @@ module.exports = function(RED) {
     RED.nodes.registerType("sync-observer", SyncObserverNode);
 }
 
-var observer = function(node, modelName, methodName) {
+var observer = function (node, modelName, methodName) {
     var _node = node;
     var _modelName = modelName;
     var _methodName = methodName;
-  
-    this.observe = function(ctx, next) {        
+
+    this.observe = function (ctx, next) {
         var id = _node.id;
 
         // sort of an hack to return a function in case this method is called by
         // node itself.
         if (ctx === null && next == null) {
-            var getNRId = function() {
+            var getNRId = function () {
                 return id;
             };
 
@@ -59,68 +59,39 @@ var observer = function(node, modelName, methodName) {
 
         var msg = {};
 
-        if (ctx.Model !== undefined) {
+        if (ctx.Model) {
             // Ajith: Added following line to add Model to the msg
             msg.Model = ctx.Model;
             msg.payload = ctx.Model.definition.name + '.' + _methodName + ' triggered';
         } else {
             msg.payload = _modelName + '.' + _methodName + ' triggered';
         }
-        msg.callContext = _node.callContext;
-        // msg.next = next;
-        msg.ctx = JSON.parse(JSON.stringify(ctx));
+        var callContext = ctx.options || _node.callContext;
+        ctx.callContext = JSON.parse(JSON.stringify(callContext));
+        msg.ctx = ctx;
 
-        msg.next = function(msg) {
-
-            var err = {};
-            if (_methodName === 'after save' || _methodName === 'after delete') {
-                 if (typeof msg.payload === 'string' && msg.payload.startsWith('Error')) {
-                    err = new Error(msg.payload);
+        msg.next = function (msg1) {
+            ctx.options = callContext;
+            var err = msg1.error || (msg1.payload && msg1.payload.error);
+            if (err) {
+                if (typeof err === 'string') {
+                    err = new Error(err);
                     err.retriable = true;
-                    return next(err);
-                 } else if (typeof msg.error === 'string') {
-                     err = new Error(msg.error);
-                     err.retriable = true;
-                     return next(err);
-                 } else if (msg.payload.error || msg.error) {
-                    err = new Error(msg.payload.error || msg.error.message);
-                    err.retriable = true;
-                    return next(err);
-                 }      
-            } 
-
-            if (msg.payload || msg.payload.error || msg.error) {
-                //reporting errors in flow execution back to loopback
-                return next(msg.payload.error || msg.error);
+                }
+                return next(err);
             }
-            // var updatedCtx = msg.ctx;
-            var updatedCtx = JSON.parse(JSON.stringify(msg.ctx));
-            // console.log('callback function called. returning to loopback.
-            // updatedCtx =', updatedCtx);
-
-            if (updatedCtx.query !== undefined) {
-                // ctx.query = updatedCtx.query;
-                _.assign(ctx.query, updatedCtx.query);
-            }
-
-            if (updatedCtx.instance !== undefined) {
-
-                _.assign(ctx.instance, updatedCtx.instance);
-                // console.log('new instance = ', ctx.instance);
-            }
-
-            if (updatedCtx.data !== undefined) {
-                _.assign(ctx.data, updatedCtx.data);
+            if (msg1.ctx.instance) {
+                _.assign(ctx.instance, msg1.ctx.instance);
             }
             next();
-
         }
+
 
         _node.send(msg);
     }
 
-    this.observe.getId = function() {
-            return _node.id;
+    this.observe.getId = function () {
+        return _node.id;
     }
 
 }
