@@ -25,8 +25,9 @@ module.exports = function(RED) {
                             decisionTableModel.exec(decisionTableName, givenInput, msg.callContext, function(err, data){
                                 if(err){
                                     node.status({"fill": "red", "shape": "dot", "text": err});
-                                    node.send([err, null]);
-                                }else {
+                                    msg.error = err;
+                                    node.send([msg, null]);
+                                } else {
                                     node.status({"fill": "green", "shape": "dot", "text": "Decision table execution successful."});
                                     setObjectWithDotChain(msg, payload, data);
                                     node.send([null, msg]);
