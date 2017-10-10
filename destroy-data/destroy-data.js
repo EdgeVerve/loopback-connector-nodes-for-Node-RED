@@ -14,35 +14,27 @@ module.exports = function(RED) {
     RED.nodes.createNode(this, config);
     var node = this;
     var _node = this;
-    var filter;
     this.on('input', function(msg) {
         node.status({});
         var modelName = config.modelname;
-	if(config.filter !== undefined && typeof config.filter === 'string') filter = JSON.parse(config.filter); 
-	if(config.filter !== undefined && typeof config.filter === 'object') filter = config.filter; 
-
-        if(!filter) filter = msg.filter;
-        if(!filter) {
-	    node.status({"fill": "red", "shape": "dot", "text":"No filter supplied" });
-            node.send([null,{payload: new Error("No filter supplied")} ]);
-            return;
-	}
-
-        console.log("INPUT", modelName, filter);
 
         var Model = loopback.findModel(modelName, node.callContext);
 
         if(Model)
         {
-            Model.destroyAll(filter, msg.callContext, function(err, response) {
+            var instance = new Model(msg.payload);
+            instance.delete(msg.callContext, function(err, response) {
                 if(err) { 
-		    console.log(err);
                     node.status({"fill": "red", "shape": "dot", "text":"An error occurred" });
-		} else {
+                    msg.payload = err;
+                    node.send([null, msg]);
+		        } else {
                     node.status({"fill": "green", "shape": "dot", "text": "Deleted " + response.count + " records successfully"});
-		}
-                msg.payload = response;
-                node.send([msg, {payload: err}]);
+                    msg.payload = response;
+                    node.send([msg, null]);
+		        }
+
+
             });
         }
 	else
