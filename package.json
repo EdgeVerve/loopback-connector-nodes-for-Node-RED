@@ -46,7 +46,7 @@
     "sinon": "^1.17.3",
     "supertest": "^1.2.0",
     "when": "^3.7.7",
-    "oe-logger": "git+https://github.com/edgeverve/oe-logger.git#v0.9.1"
+    "oe-logger": "1.0.0"
   },
   "dependencies": {
     "express": "^4.13.4"
