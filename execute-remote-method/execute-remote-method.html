@@ -1,0 +1,95 @@
+<!-- 
+ �2016 EdgeVerve Systems Limited (a fully owned Infosys subsidiary),
+ Bangalore, India. All Rights Reserved.
+  -->
+<script type="text/javascript">
+    RED.nodes.registerType('execute-remote-method', {
+        category : 'function',
+        color : '#ca993d',
+        defaults : {
+            name : {
+                value : ""
+            },
+            modelname : {
+                value : ""
+            },
+            methodname : {
+                value : ""
+            },
+            usecontext : {
+                value : true
+            },
+            contextposition: {
+                value: 0
+            },
+            callback : {
+                value: true
+            },
+            data: {
+                value : ""
+            }
+        },
+        inputs : 1,
+        outputs : 1,
+        icon : "oeCloudLogo.svg",
+        label : function() {
+            return this.name || "Execute-Remote-Method";
+        },
+        oneditprepare: function () {
+            function setcontextposition() {
+                if ($("#node-input-usecontext").is(':checked')) {
+                    $("#node-row-contextposition").show();
+                } else {
+                    $("#node-row-contextposition").hide();
+                }
+            }
+            setcontextposition();
+            $("#node-input-usecontext").on("click", function () {
+                setcontextposition();
+            });
+        }
+    });
+</script>
+<script type="text/x-red" data-template-name="execute-remote-method">
+	<div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+	<div class="form-row">
+        <label for="node-input-modelname"><i class="icon-tag"></i> Model Name</label>
+        <input type="text" id="node-input-modelname" placeholder="Model Name">
+    </div>
+	<div class="form-row">
+        <label for="node-input-methodname"><i class="icon-tag"></i> Method Name</label>
+        <input type="text" id="node-input-methodname" placeholder="Model's Remote method Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-data"><i class="icon-tag"></i> Data</label>
+        <input type="text" id="node-input-data" placeholder="Static Data object array to be used to call remote method">
+    </div>    
+    <div class="form-row">
+        <input type="checkbox" id="node-input-usecontext" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-usecontext" style="width: auto" > Use Context as argument to make call?</label>
+        <div id="node-row-contextposition" class="hide">
+            <label style="width: auto; margin-left: 20px; margin-right: 10px;" for="node-input-contextposition"><span data-i18n="httpin.tls-config"></span></label><input type="number" style="width: 300px" id="node-input-contextposition">
+        </div>
+    </div>
+    <div class="form-row">
+        <input type="checkbox" id="node-input-callback" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-callback" style="width: auto"> Wait for callback ?</label>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="execute-remote-method">
+    <p>This function node can be used to execute remote method on model. Remote method is executed as javascript function. User can make decision at run time or statically populate fields. Parameters can be taken from msg.executeRemoteMethod object or statically configured. Ret</p>
+	    <p>Below are options:</p>
+    <ul>
+    <li><code>Name</code> - (String) Name of this node</li>
+    <li><code>Model Name</code> - (String) Name of the model on which remote method can be called. It can be also taken from msg.executeRemoteMethod.modelName </li>
+    <li><code>Method Name</code> - (String) Name of the model on which remote method can be called. It can be also taken from msg.executeRemoteMethod.methodname </li>
+	<li><code>Data </code> - (JSON Array) In case if function expect data, it can be configured as JSON array. It can be also taken from msg.executeRemoteMethod.payload </li>
+    <li><code>Use Context</code> - (Checkbox/boolean) If set, context information is passed to the remote method. You can also specify index of parameter</li>
+	<li><code>Wait for Callback</code> - (Checkbox/boolean) If set, this node will wait for callback to finish and return result as payload</li>
+    </ul>
+</script>
+

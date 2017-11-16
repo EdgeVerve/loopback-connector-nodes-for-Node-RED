@@ -1,6 +1,6 @@
 {
   "name": "loopback-connector-nodes-for-Node-RED",
-  "version": "0.9.0",
+  "version": "1.0.25",
   "description": "Node-RED nodes to connect loopback (http://loopback.io) based node applications",
   "main": "node-red.js",
   "scripts": {
@@ -30,10 +30,12 @@
       "destroy-data": "destroy-data/destroy-data.js",
       "find-data": "find-data/find-data.js",
       "decision-table": "rule-engine-decision-table/decision-table.js",
-      "oe-logger": "oe-logger/oe-logger.js"
+      "oe-logger": "oe-logger/oe-logger.js",
+      "remote-method" : "remote-method/remote-method.js",
+	  "execute-remote-method": "execute-remote-method/execute-remote-method.js"
     }
   },
-  "author": "Sachin Mane",
+  "author": "Atul",
   "license": "Apache 2.0",
   "devDependencies": {
     "chai": "^3.5.0",

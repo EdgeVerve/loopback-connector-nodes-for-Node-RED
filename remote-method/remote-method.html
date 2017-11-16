@@ -1,0 +1,101 @@
+<!--
+©2015-2016 EdgeVerve Systems Limited (a fully owned Infosys subsidiary), Bangalore, India. All Rights Reserved.
+-->
+<script type="text/javascript">
+    RED.nodes.registerType('remote-method', {
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: ""},
+            modelName: {
+                value: ""
+            },
+            url: { value: "", required: true },
+            method: { value: "get", required: true },
+            methodName: { value: "", required:true},
+            roptions: {value:"{}"},
+            swaggerDoc: { type: "swagger-doc", required: false }
+        },
+        inputs: 0,
+        outputs: 1,
+        icon: "evf.png",
+        label: function () {
+            return this.name || "remote-method";
+        },
+        oneditprepare: function(e) {
+            console.log('on edit prepare ')
+        },
+        oneditsave: function(e) {
+            debugger;
+            console.log('onedit save');
+        }
+    });
+
+    RED.nodes.registerType('remote-method-end', {
+        category: 'output',
+        color: "rgb(231, 231, 174)",
+        defaults: {
+            name: { value: "" }
+        },
+        inputs: 1,
+        outputs: 0,
+        align: "right",
+        icon: "evf.png",
+        label: function () {
+            return this.name || "remote-method-end";
+        },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
+        }
+    });
+
+</script>
+
+<script type="text/x-red" data-template-name="remote-method">
+    <div class="form-row">
+        <label for="node-input-modelName"><i class="icon-tag"></i> Model Name</label>
+        <input type="text" id="node-input-modelName" placeholder="Model Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-methodName"><i class="icon-tag"></i> Method Name</label>
+        <input type="text" id="node-input-methodName" placeholder="Method Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-method"><i class="fa fa-tasks"></i>Method</label>
+        <select type="text" id="node-input-method" style="width:70%;">
+            <option value="get">GET</option>
+            <option value="post">POST</option>
+            <option value="put">PUT</option>
+            <option value="delete">DELETE</option>
+            <option value="patch">PATCH</option>
+            </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-url"><i class="fa fa-globe"></i>http path</label>
+        <input id="node-input-url" type="text" placeholder="/url">
+    </div>
+   
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-options"><i class="icon-tag"></i> Options</label>
+        <textarea rows="4" cols="60" id="node-input-roptions" placeholder="remote method options" style="width:70%;"></textarea>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="remote-method">
+    <p>A simple node that converts the message payloads into all lower-case characters</p>
+</script>
+
+<script type="text/x-red" data-template-name="remote-method-end">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="remote-method-end">
+    <p>A simple node that converts the message payloads into all lower-case characters</p>
+</script>
