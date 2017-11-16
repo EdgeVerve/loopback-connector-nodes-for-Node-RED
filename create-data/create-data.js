@@ -19,35 +19,31 @@ module.exports = function (RED) {
 			var modelName = config.modelname;
 			var dataStr = (config.data === undefined || config.data === null || config.data.trim() === "") ? msg.payload : config.data;
 			var data = (typeof dataStr === "string") ? JSON.parse(dataStr) : dataStr;
-
-			console.log("INPUT", modelName, data);
-
             var Model = loopback.findModel(modelName, node.callContext);
 
 			if (Model) {
 				Model.upsert(data, msg.callContext, function (err, response) {
 					if (err) {
-						console.log(err);
 						node.status({
 							"fill": "red",
 							"shape": "dot",
 							"text": "An error occurred"
 						});
+						msg.payload = err;
+						node.send([null, msg]);
 					} else {
 						node.status({
 							"fill": "green",
 							"shape": "dot",
 							"text": "Upserted data successfully"
 						});
+						if (response instanceof Model) {
+							msg.payload = response.toObject();
+						} else {
+							msg.payload = response;
+						}
+						node.send([msg, null]);
 					}
-					if (response instanceof Model) {
-						msg.payload = response.toObject();
-					} else {
-						msg.payload = response;
-					}
-					node.send([msg, {
-						payload: err
-					}]);
 				});
 			} else {
 				node.status({
@@ -55,9 +51,8 @@ module.exports = function (RED) {
 					"shape": "dot",
 					"text": "Model " + modelName + " not found"
 				});
-				node.send([null, {
-					payload: new Error("Model " + modelName + " not found")
-				}]);
+				msg.payload = new Error("Model " + modelName + " not found");
+				node.send([null, msg]);
 			}
 
 		});

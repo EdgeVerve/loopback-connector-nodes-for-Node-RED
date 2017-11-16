@@ -35,26 +35,23 @@ module.exports = function (RED) {
 								"shape": "dot",
 								"text": "An error occurred"
 							});
+							msg.payload = err;
+							node.send([null, msg]);
 						} else {
 							node.status({
 								"fill": "green",
 								"shape": "dot",
 								"text": "Found " + response.length + " records"
 							});
+							msg.resultModelName = modelName;
+							response.forEach(function (instance, index) {
+								if (instance instanceof Model) {
+									response[index] = response[index].toObject();
+								}
+							});
+							msg.payload = response;
+							node.send([msg, null]);
 						}
-						//msg.payload = response;
-						msg.error = err;
-						msg.resultModelName = modelName;
-
-						response.forEach(function (instance, index) {
-							if (instance instanceof Model) {
-								response[index] = response[index].toObject();
-							}
-						});
-						msg.payload = response;
-						node.send([msg, {
-							payload: err
-						}]);
 					});
 				} else {
 					var err = {
@@ -65,12 +62,8 @@ module.exports = function (RED) {
 						"shape": "dot",
 						"text": "Model " + modelName + " not found"
 					});
-					node.send([{
-						payload: null,
-						error: err
-					}, {
-						payload: err
-					}]);
+					msg.payload = err;
+					node.send([null, msg]);
 				}
 			} else {
 				var err = {
@@ -81,12 +74,8 @@ module.exports = function (RED) {
 					"shape": "dot",
 					"text": "Model Name not specified in config or as 'msg.modelname'"
 				});
-				node.send([{
-					payload: null,
-					error: err
-				}, {
-					payload: err
-				}]);
+				msg.payload = err;
+				node.send([null, msg]);
 			}
 
 

@@ -13,9 +13,6 @@
             },
             modelname : {
                 value : ""
-            },
-            filter : {
-                value : ""
             }
         },
         inputs : 1,
@@ -35,17 +32,12 @@
         <label for="node-input-modelname"><i class="icon-tag"></i> Model Name</label>
         <input type="text" id="node-input-modelname" placeholder="Model Name">
     </div>
-    <div class="form-row">
-        <label for="node-input-filter"><i class="icon-tag"></i> Filter</label>
-        <input type="text" id="node-input-filter" placeholder="Filter">
-    </div>
 
 </script>
 
 <script type="text/x-red" data-help-name="destroy-data">
-    <p>A node that deletes data in the specified Model matching the specified filter, in the Loopback application.</p>
-    <p> Filter to be matched can be optionally specified in the node configuration </p>
-    <p> If no filter is specified in configuration, then 'msg.filter' is used as filter to delete data.</p>
-    <p> If no filter is specified in msg as well as configuration, then an error is generated</p>
-    <p>To delete all data in a model, an empty filter '{}' is to be specified in either the configuration or msg.filter</p>
+    <p>A node that deletes single instance in the specified Model matching the instance specified in msg.payload.</p>
+    <p>For example, the msg.payload can have {"id":"123", "_version":"234"} , need not have the full instance details</p>
+    <p>On Success, the first output (topmost output) receives the msg with payload as details of the delete {count:1, n:1, ok:1}</p>
+    <p>On Failure, the second output receives err as msg.payload</p>
 </script>
