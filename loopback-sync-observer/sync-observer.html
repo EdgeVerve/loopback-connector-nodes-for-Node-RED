@@ -12,10 +12,10 @@
                 value : ""
             },
             modelname : {
-                value : ""
+                value : "",required:true,validate: RED.validators.regex(/^(#$|(\+|[^+#]*)(\/(\+|[^+#]*))*(\/(\+|#|[^+#]*))?$)/)
             },
             method : {
-                value : ""
+                value : "",required:true,validate: function(){return function(v) { return v.trim() !== '';}}
             }
         },
         inputs : 0,
@@ -23,6 +23,23 @@
         icon : "oeCloudLogo.svg",
         label : function() {
             return this.name || "sync-observer";
+        },
+        oneditprepare : function() {
+            $("#node-input-modelname").click(function() {
+                console.log(RED);
+                $("#node-input-modelname").addClass('disabled');
+                $.getJSON('http://localhost:' + RED.settings.editorTheme.projects.appPort + '/api/ModelDefinitions',function(data) {
+                    $("#node-input-modelname").removeClass('disabled');
+                    var modelNames = data.map(function(m) {return m.clientModelName});
+                    $("#node-input-modelname").autocomplete({
+                        source:modelNames,
+                        minLength:0,
+                        close: function( event, ui ) {
+                            $("#node-input-modelname").autocomplete( "destroy" );
+                        }
+                    }).autocomplete("search","");
+                });
+            });
         }
     });
 </script>

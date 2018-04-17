@@ -275,7 +275,7 @@ module.exports = function(RED) {
   function AsyncObserverNode(config) {
     RED.nodes.createNode(this, config);
     var node = this;
-
+    node.status({});
     var modelName = config.modelname;
     var legacyUrl = config.legacyurl;
     var altds = config.altds;
@@ -507,7 +507,10 @@ module.exports = function(RED) {
 
         next();
       });
-    }
+    } else {
+      node.status({fill:"red",shape:"dot",text:"Invalid ModelName: " + modelName});
+      return this.error(RED._("asyncObserver.errors.modelNameInvalid"));
+  }
 
     node.on('close', function() {
       // console.log('node is closing. removing observers')

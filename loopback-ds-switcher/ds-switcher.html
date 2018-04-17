@@ -11,10 +11,10 @@
         value: ""
       },
       modelname: {
-        value: ""
+        value: "",required:true,validate: RED.validators.regex(/^(#$|(\+|[^+#]*)(\/(\+|[^+#]*))*(\/(\+|#|[^+#]*))?$)/)
       },
       legacyurl: {
-        value: ""
+        value: "",required:true,validate: RED.validators.regex(/^(#$|(\+|[^+#]*)(\/(\+|[^+#]*))*(\/(\+|#|[^+#]*))?$)/)
       },
       exists: {
         value: ""
@@ -29,9 +29,23 @@
     onpaletteadd: function() {
 
     },
-    oneditprepare: function() {
-
-    },
+        oneditprepare : function() {
+            $("#node-input-modelname").click(function() {
+                console.log(RED);
+                $("#node-input-modelname").addClass('disabled');
+                $.getJSON('http://localhost:' + RED.settings.editorTheme.projects.appPort + '/api/ModelDefinitions',function(data) {
+                    $("#node-input-modelname").removeClass('disabled');
+                    var modelNames = data.map(function(m) {return m.clientModelName});
+                    $("#node-input-modelname").autocomplete({
+                        source:modelNames,
+                        minLength:0,
+                        close: function( event, ui ) {
+                            $("#node-input-modelname").autocomplete( "destroy" );
+                        }
+                    }).autocomplete("search","");
+                });
+            });
+        },
     oneditsave: function() {
 
     //  if (dstype == "external") {

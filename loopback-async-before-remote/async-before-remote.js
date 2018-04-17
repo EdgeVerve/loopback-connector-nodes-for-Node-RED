@@ -66,20 +66,30 @@ module.exports = function(RED) {
     function AsyncBeforeRemoteNode(config) {
         RED.nodes.createNode(this, config);
         var node = this;
-
+        node.status({});
         var modelName = config.modelname;
         var method = config.method;
-
+        if(!modelName || modelName.trim()==='') {
+            node.status({fill:"red",shape:"dot",text:"ModelName not Set"});
+            return  this.warn(RED._("asyncObserver.errors.modelNameNotSet")); 
+        }
+        if(!method || method.trim()==='') {
+            node.status({fill:"red",shape:"dot",text:"Method not Set"});
+            return this.warn(RED._("asyncObserver.errors.methodNotSet"));
+        }
         //var Model = loopback.findModel(modelName);
         var Model = loopback.findModel(modelName, node.callContext);
         if (Model !== undefined) {
-
+            node.status({fill:"green",shape:"dot",text:modelName});
             // Remove existing observers if any.
             // console.log('observers before removing = ', Model._observers);
             removeOldObservers(Model, node.id, method);
             // console.log('observers after removing = ', Model._observers);
 
             Model.beforeRemote(method, new observer(node, modelName, method).observe);
+        } else {
+            node.status({fill:"red",shape:"dot",text:"Invalid ModelName: " + modelName});
+            return this.error(RED._("asyncObserver.errors.modelNameInvalid"));
         }
 
         node.on('close', function() {

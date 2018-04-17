@@ -13,13 +13,22 @@ module.exports = function(RED) {
     function AsyncObserverNode(config) {
         RED.nodes.createNode(this, config);
         var node = this;
-
+        node.status({});
         var modelName = config.modelname;
         var method = config.method;
+        if(!modelName || modelName.trim()==='') {
+            node.status({fill:"red",shape:"dot",text:"ModelName not Set"});
+            return  this.warn(RED._("asyncObserver.errors.modelNameNotSet")); 
+        }
+        if(!method || method.trim()==='') {
+            node.status({fill:"red",shape:"dot",text:"Method not Set"});
+            return this.warn(RED._("asyncObserver.errors.methodNotSet"));
+        }
 
         var Model = loopback.findModel(modelName, node.callContext);
 
         if (Model !== undefined) {
+            node.status({fill:"green",shape:"dot",text:modelName});
             // console.log ('Model = ', Model._observers[method][0]);
 
             // Remove existing observers if any.
@@ -28,8 +37,10 @@ module.exports = function(RED) {
             // console.log('observers after removing = ', Model._observers);
 
             Model.observe(method, new observer(node, modelName, method).observe);
+        } else {
+            node.status({fill:"red",shape:"dot",text:"Invalid ModelName: " + modelName});
+            return this.error(RED._("asyncObserver.errors.modelNameInvalid"));
         }
-
         node.on('close', function() {
             // console.log('node is closing. removing observers')
             if (Model != undefined) {
