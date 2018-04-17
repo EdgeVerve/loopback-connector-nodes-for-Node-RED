@@ -1,6 +1,6 @@
 {
   "name": "loopback-connector-nodes-for-Node-RED",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Node-RED nodes to connect loopback (http://loopback.io) based node applications",
   "main": "node-red.js",
   "scripts": {
