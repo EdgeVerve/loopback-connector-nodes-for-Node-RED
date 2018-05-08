@@ -13,6 +13,20 @@ module.exports = function (RED) {
 		RED.nodes.createNode(this, config);
 		var node = this;
 		var _node = this;
+		node.status({});
+		var modelName = config.modelname;
+		if(modelName && modelName.trim().length > 0) {
+			var Model = loopback.findModel(modelName, _node.callContext);
+			if (!Model) {
+				node.status({
+					"fill": "red",
+					"shape": "dot",
+					"text": "Invalid ModelName: " + modelName
+				});
+				return;
+			}
+		}
+
 		this.on('input', function (msg) {
 			var filter;
 			node.status({});
@@ -79,18 +93,6 @@ module.exports = function (RED) {
 
 		node.on('close', function () {
 			node.status({});
-			var modelName = config.modelname;
-			console.log(node);
-			if(modelName && modelName.trim().length > 0) {
-				var Model = loopback.findModel(modelName, _node.callContext);
-				if (!Model) {
-					node.status({
-						"fill": "red",
-						"shape": "dot",
-						"text": "Invalid ModelName: " + modelName
-					});
-				}
-			}
 		});
 	}
 	RED.nodes.registerType("find-data", FindDataNode);

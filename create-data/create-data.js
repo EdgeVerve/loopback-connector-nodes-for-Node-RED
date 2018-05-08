@@ -13,7 +13,19 @@ module.exports = function (RED) {
 	function CreateDataNode(config) {
 		RED.nodes.createNode(this, config);
 		var node = this;
-        var _node = this;
+		var _node = this;
+		node.status({});
+		var modelName = config.modelname;
+		var Model = loopback.findModel(modelName, _node.callContext);
+		if (!Model) {
+			node.status({
+				"fill": "red",
+				"shape": "dot",
+				"text": !modelName || (modelName && modelName.trim().length === 0) ? "ModelName not Set" : "Invalid ModelName: " + modelName
+			});
+			return;
+		}		
+
 		this.on('input', function (msg) {
 			node.status({});
 			var modelName = config.modelname;
