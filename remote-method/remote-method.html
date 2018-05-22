@@ -11,8 +11,9 @@
                 value: ""
             },
             url: { value: "", required: true },
-            method: { value: "get", required: true },
+            method: { value: "GET", required: true },
             methodName: { value: "", required:true},
+            isStatic : {value : true},
             roptions: {value:"{}"},
             swaggerDoc: { type: "swagger-doc", required: false }
         },
@@ -63,11 +64,11 @@
     <div class="form-row">
         <label for="node-input-method"><i class="fa fa-tasks"></i>Method</label>
         <select type="text" id="node-input-method" style="width:70%;">
-            <option value="get">GET</option>
-            <option value="post">POST</option>
-            <option value="put">PUT</option>
-            <option value="delete">DELETE</option>
-            <option value="patch">PATCH</option>
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+            <option value="PATCH">PATCH</option>
             </select>
     </div>
     <div class="form-row">
@@ -77,8 +78,15 @@
    
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <input type="text" id="node-input-name" placeholder="Name2">
     </div>
+
+    <div class="form-row" id="node-is-static">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-isStatic" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-isStatic" style="width: 70%;" placeholder="Static Method">Static Method</label>
+    </div>
+
     <div class="form-row">
         <label for="node-input-options"><i class="icon-tag"></i> Options</label>
         <textarea rows="4" cols="60" id="node-input-roptions" placeholder="remote method options" style="width:70%;"></textarea>
@@ -86,7 +94,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="remote-method">
-    <p>A simple node that converts the message payloads into all lower-case characters</p>
+    <p>A node to create new remote methods on loopback model. Output of this node must be attached to function node, and then function node must be attached to remote-method-end node. msg.payload can be formed in function node to send remote method response. msg.model, msg.req, and msg.res can be used in function block. In case of protype methods on model instance, make Static Method flag as false, and you can use msg.instance in function block.  </p>
 </script>
 
 <script type="text/x-red" data-template-name="remote-method-end">
