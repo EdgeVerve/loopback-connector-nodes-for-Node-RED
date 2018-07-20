@@ -14,10 +14,26 @@ module.exports = function(RED) {
     RED.nodes.createNode(this, config);
     var node = this;
     var _node = this;
+
+    node.status({});
+    var modelName = config.modelname;
+    var Model = loopback.findModel(modelName, _node.callContext);
+    if (!Model) {
+        node.status({
+            "fill": "red",
+            "shape": "dot",
+            "text": !modelName || (modelName && modelName.trim().length === 0) ? "ModelName not Set" : "Invalid ModelName: " + modelName
+        });
+        return;
+    }
+
     this.on('input', function(msg) {
         node.status({});
         var modelName = config.modelname;
-
+        if(!modelName || modelName.trim()==='') {
+            node.status({fill:"red",shape:"dot",text:"ModelName not Set"});
+            return  this.warn(RED._("destroyData.errors.modelNameNotSet")); 
+        }
         var Model = loopback.findModel(modelName, node.callContext);
 
         if(Model)
@@ -36,23 +52,24 @@ module.exports = function(RED) {
 
 
             });
+        } else {
+            node.status({fill:"red",shape:"dot",text:"Invalid ModelName: " + modelName});
+            return this.error(RED._("destroyData.errors.modelNameInvalid"));
         }
-	else
-	{
-	    node.status({"fill": "red", "shape": "dot", "text":"Model " + modelName + " not found" });
-	    node.send([null, {payload: new Error("Model " + modelName + " not found")}]);
-	}
 
     });
 
-    node.on('close', function() {
+    node.on('close', function () {
         node.status({});
         var modelName = config.modelname;
         var Model = loopback.findModel(modelName, _node.callContext);
-        if(!Model)
-	{
-	    node.status({"fill": "red", "shape": "dot", "text": "ERROR: Model with name " + modelName + " does not exist"});
-	}
+        if (!Model) {
+            node.status({
+                "fill": "red",
+                "shape": "dot",
+                "text": "Invalid ModelName: " + modelName
+            });
+        }
     });
   }
   RED.nodes.registerType("destroy-data", DestroyDataNode);

@@ -9,77 +9,86 @@ var _ = require('lodash');
 
 module.exports = function (RED) {
 
-
 	function FindDataNode(config) {
 		RED.nodes.createNode(this, config);
 		var node = this;
+		var _node = this;
+		node.status({});
+		var modelName = config.modelname;
+		if(modelName && modelName.trim().length > 0) {
+			var Model = loopback.findModel(modelName, _node.callContext);
+			if (!Model) {
+				node.status({
+					"fill": "red",
+					"shape": "dot",
+					"text": "Invalid ModelName: " + modelName
+				});
+				return;
+			}
+		}
+
 		this.on('input', function (msg) {
 			var filter;
 			node.status({});
 			var modelName = config.modelname || msg.modelName;
-			if (config.filter && typeof config.filter === 'string') filter = JSON.parse(config.filter);
+			try {
+				if (config.filter && typeof config.filter === 'string') filter = JSON.parse(config.filter);
+			} catch(e) {
+				node.status({
+					"fill": "red",
+					"shape": "dot",
+					"text": e.message ? e.message : "Error while parsing " + dataStr
+				});
+				return;
+			}
 			if (config.filter && typeof config.filter === 'object') filter = config.filter;
 			if (!filter) filter = msg.filter;
 			if (!filter) filter = {};
 
-			var Model;
 
-			if (modelName && modelName.trim().length > 0) {
-                Model = loopback.findModel(modelName, node.callContext);
-				if (Model) {
-					Model.find(filter, msg.callContext, function (err, response) {
-						if (err) {
-							console.log(err);
-							node.status({
-								"fill": "red",
-								"shape": "dot",
-								"text": "An error occurred"
-							});
-							msg.payload = err;
-							node.send([null, msg]);
-						} else {
-							node.status({
-								"fill": "green",
-								"shape": "dot",
-								"text": "Found " + response.length + " records"
-							});
-							msg.resultModelName = modelName;
-							response.forEach(function (instance, index) {
-								if (instance instanceof Model) {
-									response[index] = response[index].toObject();
-								}
-							});
-							msg.payload = response;
-							node.send([msg, null]);
-						}
-					});
-				} else {
-					var err = {
-						"errorMessage": "Model " + modelName + " not found"
-					};
-					node.status({
-						"fill": "red",
-						"shape": "dot",
-						"text": "Model " + modelName + " not found"
-					});
-					msg.payload = err;
-					node.send([null, msg]);
-				}
-			} else {
-				var err = {
-					"errorMessage": "Model Name not specified in config or as 'msg.modelname'"
-				};
+			try {
+				if (filter && typeof filter === 'string') filter = JSON.parse(filter);
+			} catch(e) {
 				node.status({
 					"fill": "red",
 					"shape": "dot",
-					"text": "Model Name not specified in config or as 'msg.modelname'"
+					"text": e.message ? e.message : "Error while parsing " + dataStr
 				});
-				msg.payload = err;
-				node.send([null, msg]);
+				return;
 			}
 
-
-
+			var Model = loopback.findModel(modelName, node.callContext);
+			if (Model) {
+				Model.find(filter, msg.callContext, function (err, response) {
+					if (err) {
+						console.log(err);
+						node.status({
+							"fill": "red",
+							"shape": "dot",
+							"text": "An error occurred"
+						});
+						msg.payload = err;
+						node.send([null, msg]);
+					} else {
+						node.status({
+							"fill": "green",
+							"shape": "dot",
+							"text": "Found " + response.length + " records"
+						});
+						msg.resultModelName = modelName;
+						response.forEach(function (instance, index) {
+							if (instance instanceof Model) {
+								response[index] = response[index].toObject();
+							}
+						});
+						msg.payload = response;
+						node.send([msg, null]);
+					}
+				});
+			} else {
+				node.status({fill:"red",shape:"dot",text:"Invalid ModelName: " + modelName});
+				return this.error(RED._("findData.errors.modelNameInvalid"));
+			}
 		});
 
 		node.on('close', function () {

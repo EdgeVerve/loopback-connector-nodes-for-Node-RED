@@ -21,13 +21,23 @@ module.exports = function (RED) {
                         {arg: 'res', type: 'object', 'http': {source: 'res'}} 
                     ],
                     returns : {type:'object', root:true},
+                    isStatic: config.isStatic,
                     http: {path: config.url, verb: config.method}
                 });
-                // Generate different functions for isStatic true / false
-                Model[config.methodName] = function(req, res, options, cb) {
-                    var msgid = RED.util.generateId();
-                    var model=this;
-                    node.send({_msgid:msgid,model:model,req:req,res:res,remoteMethodCallBack:cb});
+                if (config.isStatic) {
+                    // Generate different functions for isStatic true / false
+                    Model[config.methodName] = function(req, res, options, cb) {
+                        var msgid = RED.util.generateId();
+                        var model=this;
+                        node.send({_msgid:msgid,model:model,req:req,res:res,remoteMethodCallBack:cb});
+                    }
+                } else {
+                    Model.prototype[config.methodName] = function(req, res, options, cb) {
+                        var msgid = RED.util.generateId();
+                        var model=this.constructor;
+                        var instance=this;
+                        node.send({_msgid:msgid,model:model,instance:instance,req:req,res:res,remoteMethodCallBack:cb});
+                    }
                 }
             }
         }

@@ -28,7 +28,7 @@
             $("#node-input-modelname").click(function() {
                 console.log(RED);
                 $("#node-input-modelname").addClass('disabled');
-                $.getJSON('http://localhost:' + RED.settings.editorTheme.projects.appPort + '/api/ModelDefinitions',function(data) {
+                $.getJSON('http://localhost:' + RED.settings.editorTheme.projects.appPort + '/api/ModelDefinitions?filter[order]=clientModelName',function(data) {
                     $("#node-input-modelname").removeClass('disabled');
                     var modelNames = data.map(function(m) {return m.clientModelName});
                     $("#node-input-modelname").autocomplete({

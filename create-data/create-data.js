@@ -13,21 +13,49 @@ module.exports = function (RED) {
 	function CreateDataNode(config) {
 		RED.nodes.createNode(this, config);
 		var node = this;
-        var _node = this;
+		var _node = this;
+		node.status({});
+		var modelName = config.modelname;
+		var Model = loopback.findModel(modelName, _node.callContext);
+		if (!Model) {
+			node.status({
+				"fill": "red",
+				"shape": "dot",
+				"text": !modelName || (modelName && modelName.trim().length === 0) ? "ModelName not Set" : "Invalid ModelName: " + modelName
+			});
+			return;
+		}		
+
 		this.on('input', function (msg) {
 			node.status({});
 			var modelName = config.modelname;
+			var dataStr = config.data;
+			if(!modelName || modelName.trim()==='') {
+				node.status({fill:"red",shape:"dot",text:"ModelName not Set"});
+				return  this.warn(RED._("createData.errors.modelNameNotSet")); 
+			}
 			var dataStr = (config.data === undefined || config.data === null || config.data.trim() === "") ? msg.payload : config.data;
-			var data = (typeof dataStr === "string") ? JSON.parse(dataStr) : dataStr;
+			var data;
+			try {
+				data = (typeof dataStr === "string") ? JSON.parse(dataStr) : dataStr;
+			} catch(e) {
+				node.status({
+					"fill": "red",
+					"shape": "dot",
+					"text": e.message ? e.message : "Error while parsing " + dataStr
+				});
+				return;
+			}
             var Model = loopback.findModel(modelName, node.callContext);
 
 			if (Model) {
+				node.status({});
 				Model.upsert(data, msg.callContext, function (err, response) {
 					if (err) {
 						node.status({
 							"fill": "red",
 							"shape": "dot",
-							"text": "An error occurred"
+							"text": err.name? err.name : "An error occurred while inserting. See error output"
 						});
 						msg.payload = err;
 						node.send([null, msg]);
@@ -46,13 +74,8 @@ module.exports = function (RED) {
 					}
 				});
 			} else {
-				node.status({
-					"fill": "red",
-					"shape": "dot",
-					"text": "Model " + modelName + " not found"
-				});
-				msg.payload = new Error("Model " + modelName + " not found");
-				node.send([null, msg]);
+				node.status({fill:"red",shape:"dot",text:"Invalid ModelName: " + modelName});
+				return this.error(RED._("createData.errors.modelNameInvalid"));
 			}
 
 		});
@@ -65,7 +88,7 @@ module.exports = function (RED) {
 				node.status({
 					"fill": "red",
 					"shape": "dot",
-					"text": "ERROR: Model with name " + modelName + " does not exist"
+					"text": "Invalid ModelName: " + modelName
 				});
 			}
 		});
